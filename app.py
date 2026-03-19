@@ -1,8 +1,26 @@
 """
-AI Research Assistant Agent - Day 1 UI
+AI Research Assistant Agent - Day 2
+Supports file upload and reading (TXT + PDF)
 """
 
 import streamlit as st
+from PyPDF2 import PdfReader
+
+
+def read_txt(file) -> str:
+    """Read text from TXT file."""
+    return file.read().decode("utf-8")
+
+
+def read_pdf(file) -> str:
+    """Extract text from PDF file."""
+    reader = PdfReader(file)
+    text = ""
+
+    for page in reader.pages:
+        text += page.extract_text() or ""
+
+    return text
 
 
 def main() -> None:
@@ -39,9 +57,24 @@ def main() -> None:
         if st.button("🗑 Clear"):
             st.rerun()
 
-    # Show file info
+    # Process uploaded file
     if uploaded_file:
         st.success(f"Uploaded: {uploaded_file.name}")
+
+        # Read file based on type
+        if uploaded_file.type == "text/plain":
+            document_text = read_txt(uploaded_file)
+
+        elif uploaded_file.type == "application/pdf":
+            document_text = read_pdf(uploaded_file)
+
+        else:
+            st.error("Unsupported file type")
+            return
+
+        # Display extracted content
+        st.subheader("📄 Extracted Document Content")
+        st.text_area("Content", document_text, height=300)
 
 
 if __name__ == "__main__":
