@@ -1,5 +1,5 @@
 """
-AI Research Assistant Agent - Day 2
+AI Research Assistant Agent 
 Supports file upload and reading (TXT + PDF)
 """
 
