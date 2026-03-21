@@ -1,5 +1,5 @@
 """
-AI Research Assistant Agent 
+AI Research Assistant Agent - Day 2
 Supports file upload and reading (TXT + PDF)
 """
 
@@ -11,6 +11,29 @@ def read_txt(file) -> str:
     """Read text from TXT file."""
     return file.read().decode("utf-8")
 
+def split_text(text: str, chunk_size: int = 500, overlap: int = 100) -> list[str]:
+    """
+    Split text into chunks for processing.
+
+    Args:
+        text: Full document text
+        chunk_size: size of each chunk
+        overlap: overlapping text between chunks
+
+    Returns:
+        List of text chunks
+    """
+    chunks = []
+    start = 0
+
+    while start < len(text):
+        end = start + chunk_size
+        chunk = text[start:end]
+        chunks.append(chunk)
+
+        start += chunk_size - overlap
+
+    return chunks
 
 def read_pdf(file) -> str:
     """Extract text from PDF file."""
@@ -74,7 +97,16 @@ def main() -> None:
 
         # Display extracted content
         st.subheader("📄 Extracted Document Content")
-        st.text_area("Content", document_text, height=300)
+        st.text_area("Content", document_text[:2000], height=200)
+
+        # Split into chunks
+        chunks = split_text(document_text)
+
+        st.subheader("🧩 Text Chunks")
+
+        for i, chunk in enumerate(chunks[:5]):  # show only first 5
+            st.write(f"Chunk {i+1}:")
+            st.code(chunk)
 
 
 if __name__ == "__main__":
